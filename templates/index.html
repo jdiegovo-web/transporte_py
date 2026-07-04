@@ -1,41 +1,456 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Registro de Personal</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 50px; background-color: #f4f4f9; }
-        form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 400px; }
-        input { display: block; width: 100%; margin-bottom: 15px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
-        button:hover { background-color: #218838; }
-        .mensaje { color: green; margin-bottom: 15px; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Registro de Cliente · Manifiesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3F4EF;
+    --panel:#FFFFFF;
+    --ink:#1E2A38;
+    --ink-soft:#5B6B7A;
+    --accent:#E2A63B;
+    --accent-deep:#B97D1F;
+    --line:#DDE1D8;
+    --rule:#B7BEB2;
+    --success:#3F7A5C;
+    --success-bg:#EAF3EE;
+    --danger:#BD4B33;
+    --focus:#2E6E8E;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:28px 28px;
+    background-position:-1px -1px;
+    color:var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    padding:20px 14px 110px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{ max-width:480px; margin:0 auto; }
+
+  /* --- Label header: barcode strip + tracking-style eyebrow --- */
+  .label-head{
+    background:var(--ink);
+    border-radius:var(--radius) var(--radius) 0 0;
+    padding:18px 20px 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .barcode{
+    height:26px;
+    background-image: repeating-linear-gradient(90deg,
+      #fff 0 2px, transparent 2px 4px,
+      #fff 4px 5px, transparent 5px 9px,
+      #fff 9px 12px, transparent 12px 15px,
+      #fff 15px 16px, transparent 16px 20px);
+    opacity:0.85;
+    margin-bottom:12px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--accent);
+    text-transform:uppercase;
+    margin:0 0 4px;
+  }
+  h1{
+    font-family:'Archivo', sans-serif;
+    font-weight:900;
+    font-size:26px;
+    line-height:1.05;
+    color:#fff;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    color:#B7C2CC;
+    font-size:13px;
+    margin:6px 0 0;
+  }
+
+  form{
+    background:var(--panel);
+    border-radius:0 0 var(--radius) var(--radius);
+    box-shadow:0 8px 24px rgba(30,42,56,0.08);
+    padding:4px 20px 20px;
+  }
+
+  .mensaje{
+    background:var(--success-bg);
+    color:var(--success);
+    border:1px solid var(--success);
+    border-radius:10px;
+    padding:12px 14px;
+    font-weight:600;
+    font-size:14px;
+    margin:16px 0;
+  }
+
+  /* --- Perforated section divider, like a ticket stub tear line --- */
+  .section{ padding:22px 0 4px; position:relative; }
+  .section:not(:first-of-type){
+    margin-top:8px;
+  }
+  .section:not(:first-of-type)::before{
+    content:"";
+    display:block;
+    height:1px;
+    margin:0 -20px 22px;
+    background-image: repeating-linear-gradient(90deg, var(--rule) 0 6px, transparent 6px 12px);
+    position:relative;
+  }
+  .section-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--accent-deep);
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:0 0 14px;
+  }
+  .section-label .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--accent);
+    display:inline-block;
+  }
+
+  .field{ margin-bottom:14px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  label .opt{
+    font-weight:400;
+    color:#9AA6AE;
+    text-transform:none;
+    letter-spacing:0;
+  }
+  label .req{ color:var(--danger); }
+
+  input[type="text"], input[type="tel"], input[type="email"], textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    font-size:15px;
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background:#FBFBF9;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  textarea{ resize:vertical; min-height:70px; }
+  input:focus, textarea:focus{
+    outline:none;
+    border-color:var(--focus);
+    box-shadow:0 0 0 3px rgba(46,110,142,0.15);
+    background:#fff;
+  }
+
+  /* --- Photo upload --- */
+  .dropzone{
+    border:2px dashed var(--line);
+    border-radius:12px;
+    padding:20px 14px;
+    text-align:center;
+    cursor:pointer;
+    background:#FBFBF9;
+    transition:border-color .15s, background .15s;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--accent);
+    background:#FCF6EA;
+  }
+  .dropzone svg{ display:block; margin:0 auto 8px; }
+  .dropzone .dz-title{ font-weight:600; font-size:14px; color:var(--ink); }
+  .dropzone .dz-sub{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  #fotos-input{ display:none; }
+
+  .preview-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    margin-top:12px;
+  }
+  .thumb{
+    position:relative;
+    aspect-ratio:1;
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb .remove{
+    position:absolute; top:3px; right:3px;
+    width:20px; height:20px;
+    background:rgba(30,42,56,0.75);
+    color:#fff; border:none; border-radius:50%;
+    font-size:13px; line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .photo-count{
+    font-size:12px; color:var(--ink-soft); margin-top:8px;
+  }
+
+  /* --- Sticky submit bar (mobile-first) --- */
+  .submit-bar{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, rgba(243,244,239,0) 0%, var(--paper) 35%);
+  }
+  .submit-inner{ max-width:480px; margin:0 auto; }
+  button.submit{
+    width:100%;
+    background:var(--accent);
+    color:var(--ink);
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    font-family:'Archivo', sans-serif;
+    font-weight:800;
+    font-size:15.5px;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(226,166,59,0.4);
+    transition:transform .1s, background .15s;
+  }
+  button.submit:active{ transform:scale(0.98); background:var(--accent-deep); }
+
+  .foot-note{
+    text-align:center;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+
+  @media (max-width:380px){
+    .row2{ grid-template-columns:1fr; }
+    h1{ font-size:22px; }
+  }
+</style>
 </head>
 <body>
-    <h2>Registro de Personal - Transporte</h2>
-    
+<div class="wrap">
+
+  <div class="label-head">
+    <div class="barcode"></div>
+    <p class="eyebrow">Nuevo registro · Cliente</p>
+    <h1>Alta de Cliente</h1>
+    <p class="subtitle">Transporte España → Paraguay</p>
+  </div>
+
+  <form action="/registrar" method="post" enctype="multipart/form-data" id="cliente-form">
+
     {% if mensaje %}
-        <p class="mensaje">{{ mensaje }}</p>
+      <div class="mensaje">{{ mensaje }}</div>
     {% endif %}
 
-    <form action="/registrar" method="post">
-        <label>Primer Nombre:</label>
-        <input type="text" name="primer_nombre" required>
+    <!-- DATOS PERSONALES -->
+    <div class="section">
+      <p class="section-label"><span class="dot"></span>Datos personales</p>
 
-        <label>Segundo Nombre:</label>
-        <input type="text" name="segundo_nombre">
+      <div class="row2">
+        <div class="field">
+          <label>Primer nombre <span class="req">*</span></label>
+          <input type="text" name="primer_nombre" required>
+        </div>
+        <div class="field">
+          <label>Segundo nombre <span class="opt">(opcional)</span></label>
+          <input type="text" name="segundo_nombre">
+        </div>
+      </div>
 
-        <label>Primer Apellido:</label>
-        <input type="text" name="primer_apellido" required>
+      <div class="row2">
+        <div class="field">
+          <label>Primer apellido <span class="req">*</span></label>
+          <input type="text" name="primer_apellido" required>
+        </div>
+        <div class="field">
+          <label>Segundo apellido <span class="opt">(opcional)</span></label>
+          <input type="text" name="segundo_apellido">
+        </div>
+      </div>
 
-        <label>Segundo Apellido:</label>
-        <input type="text" name="segundo_apellido">
+      <div class="field">
+        <label>DNI / Documento actual <span class="req">*</span></label>
+        <input type="text" name="dni_actual" required inputmode="text" autocomplete="off">
+      </div>
+    </div>
 
-        <label>DNI / Documento Actual (Obligatorio):</label>
-        <input type="text" name="dni_actual" required>
+    <!-- CONTACTO EN ESPAÑA -->
+    <div class="section">
+      <p class="section-label"><span class="dot"></span>Contacto en España</p>
 
-        <button type="submit">Guardar en PostgreSQL</button>
-    </form>
+      <div class="field">
+        <label>Teléfono principal <span class="req">*</span></label>
+        <input type="tel" name="telefono_principal" required inputmode="tel">
+      </div>
+      <div class="field">
+        <label>Teléfono alternativo <span class="opt">(opcional)</span></label>
+        <input type="tel" name="telefono_alternativo" inputmode="tel">
+      </div>
+      <div class="field">
+        <label>Email <span class="opt">(opcional)</span></label>
+        <input type="email" name="email" inputmode="email">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Usuario de Telegram <span class="opt">(opcional)</span></label>
+          <input type="text" name="telegram_user" placeholder="@usuario">
+        </div>
+        <div class="field">
+          <label>Chat ID Telegram <span class="opt">(opcional)</span></label>
+          <input type="text" name="telegram_chat_id">
+        </div>
+      </div>
+    </div>
+
+    <!-- ORIGEN: RECOGIDA -->
+    <div class="section">
+      <p class="section-label"><span class="dot"></span>Recogida en España</p>
+      <div class="field">
+        <label>Dirección de recogida <span class="req">*</span></label>
+        <textarea name="direccion_recogida" required placeholder="Calle, número, piso, ciudad, código postal"></textarea>
+      </div>
+    </div>
+
+    <!-- DESTINO: PARAGUAY -->
+    <div class="section">
+      <p class="section-label"><span class="dot"></span>Destinatario en Paraguay</p>
+      <div class="field">
+        <label>Nombre del destinatario <span class="req">*</span></label>
+        <input type="text" name="nombre_destinatario_py" required>
+      </div>
+      <div class="field">
+        <label>Teléfono del destinatario <span class="req">*</span></label>
+        <input type="tel" name="telefono_destinatario_py" required inputmode="tel">
+      </div>
+      <div class="field">
+        <label>Dirección de destino <span class="req">*</span></label>
+        <textarea name="direccion_destino_py" required placeholder="Calle, número, barrio, ciudad, departamento"></textarea>
+      </div>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="section">
+      <p class="section-label"><span class="dot"></span>Fotos</p>
+
+      <div class="dropzone" id="dropzone">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <path d="M4 16.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5M7.5 9 12 4.5 16.5 9M12 4.5V15" stroke="#B97D1F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="dz-title">Subir fotos</p>
+        <p class="dz-sub">Toca para elegir de la galería o tomar una foto</p>
+      </div>
+      <input type="file" id="fotos-input" name="fotos" accept="image/*" multiple capture="environment">
+      <div class="preview-grid" id="preview-grid"></div>
+      <p class="photo-count" id="photo-count"></p>
+    </div>
+
+    <!-- NOTAS -->
+    <div class="section">
+      <p class="section-label"><span class="dot"></span>Notas</p>
+      <div class="field">
+        <label>Notas adicionales <span class="opt">(opcional)</span></label>
+        <textarea name="notas" placeholder="Cualquier detalle útil sobre el cliente o el envío"></textarea>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="submit-bar">
+    <div class="submit-inner">
+      <button type="submit" form="cliente-form" class="submit">Guardar cliente</button>
+      <p class="foot-note">Los campos marcados con * son obligatorios</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const dropzone = document.getElementById('dropzone');
+  const input = document.getElementById('fotos-input');
+  const grid = document.getElementById('preview-grid');
+  const count = document.getElementById('photo-count');
+  let files = [];
+
+  function syncInput(){
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+  }
+
+  function render(){
+    grid.innerHTML = '';
+    files.forEach((file, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb';
+
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      thumb.appendChild(img);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'remove';
+      btn.innerHTML = '&times;';
+      btn.setAttribute('aria-label', 'Quitar foto');
+      btn.addEventListener('click', () => {
+        files.splice(idx, 1);
+        syncInput();
+        render();
+      });
+      thumb.appendChild(btn);
+
+      grid.appendChild(thumb);
+    });
+    count.textContent = files.length
+      ? files.length + (files.length === 1 ? ' foto seleccionada' : ' fotos seleccionadas')
+      : '';
+  }
+
+  dropzone.addEventListener('click', () => input.click());
+
+  input.addEventListener('change', () => {
+    files = files.concat(Array.from(input.files));
+    syncInput();
+    render();
+  });
+
+  ['dragover','dragleave','drop'].forEach(evt => {
+    dropzone.addEventListener(evt, e => e.preventDefault());
+  });
+  dropzone.addEventListener('dragover', () => dropzone.classList.add('drag'));
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+  dropzone.addEventListener('drop', (e) => {
+    dropzone.classList.remove('drag');
+    const dropped = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    files = files.concat(dropped);
+    syncInput();
+    render();
+  });
+})();
+</script>
 </body>
 </html>
