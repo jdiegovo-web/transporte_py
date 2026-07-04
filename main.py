@@ -14,7 +14,8 @@ templates.env.cache = None
 
 @app.get("/", response_class=HTMLResponse)
 def mostrar_formulario(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, name="index.html")
+    #return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/registrar", response_class=HTMLResponse)
 def registrar_usuario(
@@ -50,6 +51,9 @@ def registrar_usuario(
     
     mensaje_exito = f"¡{primer_nombre} {primer_apellido} guardado con éxito en PostgreSQL!"
     return templates.TemplateResponse(
-        "index.html", 
-        {"request": request, "mensaje": mensaje_exito}
+        request, 
+        name="index.html", 
+        context={"mensaje": mensaje_exito}
+        #"index.html", 
+        #{"request": request, "mensaje": mensaje_exito}
     )
