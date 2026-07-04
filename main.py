@@ -14,7 +14,7 @@ templates.env.cache = None
 
 @app.get("/", response_class=HTMLResponse)
 def mostrar_formulario(request: Request):
-    return templates.TemplateResponse(request, name="index.html")
+    return templates.TemplateResponse(request=request, name="index.html")
     #return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/registrar", response_class=HTMLResponse)
