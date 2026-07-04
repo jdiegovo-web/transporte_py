@@ -51,7 +51,7 @@ def registrar_usuario(
     
     mensaje_exito = f"¡{primer_nombre} {primer_apellido} guardado con éxito en PostgreSQL!"
     return templates.TemplateResponse(
-        request, 
+        request=request, 
         name="index.html", 
         context={"mensaje": mensaje_exito}
         #"index.html", 
