@@ -10,10 +10,11 @@ from app.models import Cliente
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+templates.env.cache = None
 
 @app.get("/", response_class=HTMLResponse)
 def mostrar_formulario(request: Request):
-    return templates.TemplateResponse("index.html", context={"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/registrar", response_class=HTMLResponse)
 def registrar_usuario(
