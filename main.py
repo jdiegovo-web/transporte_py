@@ -13,7 +13,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 def mostrar_formulario(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", context={"request": request})
 
 @app.post("/registrar", response_class=HTMLResponse)
 def registrar_usuario(
